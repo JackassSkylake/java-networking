@@ -32,15 +32,11 @@ public class RawStringBodyGenerator implements PostBodyGenerator{
 	}
 
 	@Override
-	public byte[] generate() {
+	public byte[] generate() throws UnsupportedEncodingException {
 		if(dataStr!=null) {
-			try {
-				return dataStr.getBytes(encoding);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+			return dataStr.getBytes(encoding);
 		}
-		return null;
+		return new byte[0];
 	}
 
 }

@@ -15,8 +15,58 @@ public class NetResponse {
 	private int respCode;
 	// 返回数据
 	private byte[] respData;
+	
+	private String cacheControlHeader;
+	
+	private String connectionHeader;
+	
+	private String contentEncodingHeader;
+	
+	private String contentTypeHeader;
+	
+	private String serverHeader;
 
-	transient private HttpURLConnection connection;
+	private HttpURLConnection connection;
+
+	public String getCacheControlHeader() {
+		return cacheControlHeader;
+	}
+
+	public void setCacheControlHeader(String cacheControlHeader) {
+		this.cacheControlHeader = cacheControlHeader;
+	}
+
+	public String getConnectionHeader() {
+		return connectionHeader;
+	}
+
+	public void setConnectionHeader(String connectionHeader) {
+		this.connectionHeader = connectionHeader;
+	}
+
+	public String getContentEncodingHeader() {
+		return contentEncodingHeader;
+	}
+
+	public void setContentEncodingHeader(String contentEncodingHeader) {
+		this.contentEncodingHeader = contentEncodingHeader;
+	}
+
+	public String getContentTypeHeader() {
+		return contentTypeHeader;
+	}
+
+	public void setContentTypeHeader(String contentTypeHeader) {
+		this.contentTypeHeader = contentTypeHeader;
+	}
+
+	public String getServerHeader() {
+		return serverHeader;
+	}
+
+	public void setServerHeader(String serverHeader) {
+		this.serverHeader = serverHeader;
+	}
 
 	public void setRespData(byte[] data) {
 		this.respData = data;
@@ -46,14 +96,8 @@ public class NetResponse {
 		return respData;
 	}
 
-	public String getRespDataAsString(String encoding) {
-		String ret = null;
-		try {
-			ret = new String(respData, encoding);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return ret;
+	public String getRespDataAsString(String encoding) throws UnsupportedEncodingException {
+		return new String(respData, encoding);
 	}
 
 	public String getContentType() {
@@ -63,15 +107,4 @@ public class NetResponse {
 	public String getContentEncoding() {
 		return connection.getContentEncoding();
 	}
-
-	@Override
-	public String toString() {
-		try {
-			return "NetResponse [respCode=" + respCode + ", respData=" + new String(respData, "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return "";
-	}
-
 }

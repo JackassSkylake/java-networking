@@ -8,5 +8,5 @@ package com.jackass.networking.postbody;
  *
  */
 public interface PostBodyGenerator {
-	public byte[] generate();
+	public byte[] generate() throws Exception;
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.jackass.networking.afterconn;
+package com.jackass.networking;
 
 import java.net.HttpURLConnection;
 

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.zip.GZIPInputStream;
 
+import com.jackass.networking.AfterConnectCallback;
 import com.jackass.networking.StreamTool;
 
 /**

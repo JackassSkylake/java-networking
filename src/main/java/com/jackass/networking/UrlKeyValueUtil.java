@@ -9,30 +9,52 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author jackass
  *
  */
 public class UrlKeyValueUtil {
-	public static String toUrlKeyVal(Map<String, Object> params) {
-		StringBuffer buffer = new StringBuffer();
-		for (Entry<String, Object> entry : params.entrySet()) {
-			try {
-				String value=URLEncoder.encode(String.valueOf(entry.getValue()), "utf-8");
-				buffer.append(entry.getKey() + "=" + value + "&");
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if (buffer.length() > 0) {
-			buffer.deleteCharAt(buffer.length() - 1);
-		}
-		return buffer.toString();
+	private static Logger logger = LoggerFactory.getLogger(UrlKeyValueUtil.class);
+
+	private UrlKeyValueUtil() {
 	}
 
-	public static Map<String, Object> toParamsMap(String keyValStr) {
-		Map<String, Object> params = new HashMap<>();
+	public static String optimizeUrl(String url, Map<String, String> kvMap) {
+		String reqUrl = url;
+		if (kvMap != null && !kvMap.isEmpty()) {
+			if (reqUrl.indexOf('?') != -1) {
+				reqUrl = reqUrl + "&" + toUrlKeyVal(kvMap);
+			} else {
+				reqUrl = reqUrl + "?" + toUrlKeyVal(kvMap);
+			}
+		}
+		return reqUrl;
+	}
+
+	public static String toUrlKeyVal(Map<String, String> params) {
+		StringBuilder builder = new StringBuilder();
+		for (Entry<String, String> entry : params.entrySet()) {
+			try {
+				String value = URLEncoder.encode(entry.getValue(), "utf-8");
+				builder.append(entry.getKey());
+				builder.append("=");
+				builder.append(value);
+				builder.append("&");
+			} catch (UnsupportedEncodingException e) {
+				logger.error("", e);
+			}
+		}
+		if (builder.length() > 0) {
+			builder.deleteCharAt(builder.length() - 1);
+		}
+		return builder.toString();
+	}
+
+	public static Map<String, String> toParamsMap(String keyValStr) {
+		Map<String, String> params = new HashMap<>();
 		if (keyValStr != null) {
 			String[] keyValPairs = keyValStr.split("&");
 			for (String pairStr : keyValPairs) {

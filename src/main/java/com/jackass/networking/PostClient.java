@@ -3,34 +3,59 @@
  */
 package com.jackass.networking;
 
-import java.io.UnsupportedEncodingException;
-
-import com.jackass.networking.postbody.PostBodyGenerator;
-import com.jackass.networking.postbody.RawStringBodyGenerator;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * @author jackass
  *
  */
 public class PostClient extends AbstractHttpClient{
+	private byte[] postData;
+	
+	
 	public PostClient() {}
 	public PostClient(String url,MimeType mimeType) {
-		this.url=url;
-		super.setContentType(mimeType);
+		super(url);
+		super.setMimeType(mimeType);
+	}
+	
+	public byte[] getPostData() {
+		return postData;
+	}
+	public void setPostData(byte[] postData) {
+		this.postData = postData;
 	}
 	
 	@Override
-	final protected boolean isPost() {
-		return true;
+	public final byte[] doRequest() throws Exception {
+		String reqUrl = UrlKeyValueUtil.optimizeUrl(addr, urlParams);
+		URL url = new URL(reqUrl);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setDoInput(true);
+		connection.setDoOutput(true);
+		connection.setRequestMethod("POST");
+		setAssignHeaderParams(connection);
+		if (postData != null) {
+			connection.setRequestProperty("Content-Length", String.valueOf(postData.length));
+		}
+
+		beforeConn(connection);
+
+		connection.connect();
+
+		try (OutputStream outputStream = connection.getOutputStream();) {
+			if (postData != null)
+				outputStream.write(postData);
+			outputStream.flush();
+		}
+
+		return afterConn(connection);
 	}
 	
-	public void generatePostBody(PostBodyGenerator generator) {
-		postBody=generator.generate();
-	}
-	
-	public void generatePostBody(String data,String encoding) throws UnsupportedEncodingException {
-		RawStringBodyGenerator generator = new RawStringBodyGenerator(data);
-		generator.setEncoding("utf-8");
-		postBody=generator.generate();
+	@Override
+	public final RequestMethod getRequestMethod() {
+		return RequestMethod.POST;
 	}
 }

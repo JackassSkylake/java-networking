@@ -6,6 +6,7 @@ package com.jackass.networking.afterconn;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
+import com.jackass.networking.AfterConnectCallback;
 import com.jackass.networking.StreamTool;
 
 /**
