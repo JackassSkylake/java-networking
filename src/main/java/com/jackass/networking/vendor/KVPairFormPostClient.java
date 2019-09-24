@@ -3,34 +3,35 @@
  */
 package com.jackass.networking.vendor;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.jackass.networking.MimeType;
 import com.jackass.networking.PostClient;
+import com.jackass.networking.postbody.KVPairFormDataGenerator;
 
 /**
  * @author jackass
  *
  */
 public class KVPairFormPostClient extends PostClient{
-	private String bodyKvs="";
+	private Map<String, String> params=new LinkedHashMap<>();
 	
 	public KVPairFormPostClient() {
 		setMimeType(MimeType.XWWWFORM);
+		setBodyGenerator(new KVPairFormDataGenerator(params));
 	}
 	
 	public KVPairFormPostClient(String url) {
 		super(url, MimeType.XWWWFORM);
+		setBodyGenerator(new KVPairFormDataGenerator(params));
 	}
 	
 	public void addParam(String key,String value) {
-		bodyKvs=String.format("%s%s=%s&", bodyKvs,key,value);
+		params.put(key, value);
 	}
 	
 	public void addAllParams(Map<String, String> params) {
-		for(Entry<String, String> entry:params.entrySet()) {
-			addParam(entry.getKey(), entry.getValue());
-		}
+		this.params.putAll(params);
 	}
 }

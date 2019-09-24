@@ -7,13 +7,15 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.jackass.networking.postbody.PostBodyGenerator;
+
 /**
  * @author jackass
  *
  */
 public class PostClient extends AbstractHttpClient{
-	private byte[] postData;
 	
+	private PostBodyGenerator bodyGenerator;
 	
 	public PostClient() {}
 	public PostClient(String url,MimeType mimeType) {
@@ -21,11 +23,17 @@ public class PostClient extends AbstractHttpClient{
 		super.setMimeType(mimeType);
 	}
 	
-	public byte[] getPostData() {
-		return postData;
+	/**
+	 * @return the bodyGenerator
+	 */
+	public PostBodyGenerator getBodyGenerator() {
+		return bodyGenerator;
 	}
-	public void setPostData(byte[] postData) {
-		this.postData = postData;
+	/**
+	 * @param bodyGenerator the bodyGenerator to set
+	 */
+	public void setBodyGenerator(PostBodyGenerator bodyGenerator) {
+		this.bodyGenerator = bodyGenerator;
 	}
 	
 	@Override
@@ -37,7 +45,11 @@ public class PostClient extends AbstractHttpClient{
 		connection.setDoOutput(true);
 		connection.setRequestMethod("POST");
 		setAssignHeaderParams(connection);
-		if (postData != null) {
+		
+		byte[] postData=null;
+		
+		if (bodyGenerator != null) {
+			postData=bodyGenerator.generate();
 			connection.setRequestProperty("Content-Length", String.valueOf(postData.length));
 		}
 

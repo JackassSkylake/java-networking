@@ -30,6 +30,21 @@ public class RawStringBodyGenerator implements PostBodyGenerator{
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
 	}
+	
+
+	/**
+	 * @return the dataStr
+	 */
+	public String getDataStr() {
+		return dataStr;
+	}
+
+	/**
+	 * @param dataStr the dataStr to set
+	 */
+	public void setDataStr(String dataStr) {
+		this.dataStr = dataStr;
+	}
 
 	@Override
 	public byte[] generate() throws UnsupportedEncodingException {

@@ -25,7 +25,7 @@ public class KVPairFormDataGenerator implements PostBodyGenerator {
 	public KVPairFormDataGenerator() {}
 
 	public KVPairFormDataGenerator(Map<String, String> params) {
-		this.params.putAll(params);
+		this.params=params;
 	}
 
 	public void addParam(String key, String value) {
