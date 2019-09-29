@@ -14,6 +14,7 @@ public enum MimeType {
 	HTML("text/html"),
 	PLAIN("text/plain"),
 	JSON("application/json"),
+	XML("application/xml"),
 	XWWWFORM("application/x-www-form-urlencoded"),
 	MULTYPART_FORM_DATA("multipart/form-data");
 	
