@@ -226,8 +226,8 @@ public abstract class AbstractHttpClient{
 			SSLContext sslContext=null;
 			String sslContextProtocol = httpsConfig.getSslContextProtocol();
 			String securityProvider = httpsConfig.getSecurityProvider();
-			boolean hasProtocol = StringUtils.isBlank(sslContextProtocol);
-			boolean hasProvider = StringUtils.isBlank(securityProvider);
+			boolean hasProtocol = StringUtils.isNotBlank(sslContextProtocol);
+			boolean hasProvider = StringUtils.isNotBlank(securityProvider);
 			if (hasProtocol && hasProvider) {
 				sslContext=SSLContext.getInstance(sslContextProtocol, securityProvider);
 			}else if(hasProtocol) {

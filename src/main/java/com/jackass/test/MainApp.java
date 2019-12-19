@@ -43,7 +43,7 @@ public class MainApp {
 		System.out.println(response3.getRespDataAsString("utf-8"));*/
 		
 		RawStringPostClient postClient=new RawStringPostClient("https://api.mch.weixin.qq.com/pay/refundquery",MimeType.XML);
-		//postClient.setUseHttps(true);
+		postClient.setUseHttps(true);
 		
 		String data="<xml>\n" + 
 				"   <appid>wx94753d0a76b5c611</appid>\n" + 
