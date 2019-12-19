@@ -5,9 +5,20 @@ package com.jackass.networking;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.jackass.networking.afterconn.SimpleAfterConHandler;
 
@@ -35,7 +46,11 @@ public abstract class AbstractHttpClient{
 	protected byte[] respData; 
 
 	protected String addr;
+	
+	private boolean useHttps=false;
 
+	private HttpsConfig httpsConfig=new HttpsConfig(null, null, new TrustManager[] {new TrustEverythingX509TrustManager()});
+	
 	/**
 	 * 
 	 */
@@ -204,8 +219,31 @@ public abstract class AbstractHttpClient{
 	}
 	
 	public abstract RequestMethod getRequestMethod();
+	
+	protected void httpsConfigSetup(HttpURLConnection conn) throws NoSuchAlgorithmException, NoSuchProviderException, KeyManagementException {
+		if(useHttps) {
+			HttpsURLConnection https=(HttpsURLConnection) conn;
+			SSLContext sslContext=null;
+			String sslContextProtocol = httpsConfig.getSslContextProtocol();
+			String securityProvider = httpsConfig.getSecurityProvider();
+			boolean hasProtocol = StringUtils.isBlank(sslContextProtocol);
+			boolean hasProvider = StringUtils.isBlank(securityProvider);
+			if (hasProtocol && hasProvider) {
+				sslContext=SSLContext.getInstance(sslContextProtocol, securityProvider);
+			}else if(hasProtocol) {
+				sslContext=SSLContext.getInstance(sslContextProtocol);
+			}else {
+				sslContext=SSLContext.getInstance("TLSv1.2");
+			}
+			TrustManager[] trustManagers = httpsConfig.getTrustManagers();
+			sslContext.init(null, trustManagers, new SecureRandom());
+			SSLSocketFactory socketFactory = sslContext.getSocketFactory();
+			https.setSSLSocketFactory(socketFactory);
+		}
+	}
 
-	protected void beforeConn(HttpURLConnection conn) {
+	protected void beforeConn(HttpURLConnection conn) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException {
+		httpsConfigSetup(conn);
 		if (beforeConnectCallback != null) {
 			beforeConnectCallback.beforeConnect(conn);
 		}
@@ -251,6 +289,27 @@ public abstract class AbstractHttpClient{
 
 	public void setNetResponse(NetResponse netResponse) {
 		this.netResponse = netResponse;
+	}
+
+	/**
+	 * @return the useHttps
+	 */
+	public boolean isUseHttps() {
+		return useHttps;
+	}
+
+	/**
+	 * @param useHttps the useHttps to set
+	 */
+	public void setUseHttps(boolean useHttps) {
+		this.useHttps = useHttps;
+	}
+
+	/**
+	 * @return the httpsConfig
+	 */
+	public HttpsConfig getHttpsConfig() {
+		return httpsConfig;
 	}
 }
 
